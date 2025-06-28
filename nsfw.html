@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Earnify Image Album</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earnify Album</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,187 +12,220 @@
       background: linear-gradient(135deg, #1f2a40, #2f80ed);
       color: white;
       padding: 20px;
-      overflow-x: hidden;
-    }
-    h1 {
-      text-align: center;
-      font-size: 26px;
-      color: #00ffd2;
-      margin-bottom: 20px;
-    }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 0 10px #00000050;
-      backdrop-filter: blur(8px);
-      animation: fadeIn 0.6s ease forwards;
-      transform: translateY(20px);
-      opacity: 0;
-      cursor: pointer;
-    }
-    .card img {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 15px;
-    }
-    @keyframes fadeIn {
-      to {opacity: 1; transform: translateY(0);}
-    }
+    }h1 {
+  text-align: center;
+  font-size: 26px;
+  color: #00ffd2;
+  margin-bottom: 20px;
+}
 
-    .back-home {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      width: 40px;
-      height: 40px;
-      background: #00ffd2;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: black;
-      font-size: 20px;
-      text-decoration: none;
-      box-shadow: 0 0 8px #00000030;
-      z-index: 1000;
-    }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  max-width: 1000px;
+  margin: auto;
+}
 
-    .scroll-btn {
-      position: fixed;
-      right: 14px;
-      background: #00ffd2;
-      color: black;
-      font-weight: bold;
-      border-radius: 10px;
-      padding: 10px;
-      cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 0 10px #00000050;
-      display: none;
-      transition: 0.3s;
-    }
-    #goTop { bottom: 70px; }
-    #goBottom { bottom: 20px; }
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px #00000050;
+  cursor: pointer;
+}
 
-    .preview {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      display: none;
-    }
-    .preview img {
-      max-width: 95%;
-      max-height: 95%;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #000;
-    }
-    .nav-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.3);
-      border: none;
-      color: white;
-      font-size: 30px;
-      padding: 10px 20px;
-      cursor: pointer;
-      z-index: 1001;
-      border-radius: 50%;
-    }
-    #prevBtn { left: 20px; }
-    #nextBtn { right: 20px; }
+.card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.4);
+  font-size: 13px;
+  color: #ccc;
+}
+
+.image-stats i {
+  margin-right: 4px;
+}
+
+.preview {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.preview img {
+  max-width: 95vw;
+  max-height: 95vh;
+  border-radius: 8px;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.3);
+  color: white;
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#prevBtn { left: 20px; }
+#nextBtn { right: 20px; }
+
+#smartScrollBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #00ffcc;
+  color: #000;
+  padding: 6px 10px;
+  font-weight: bold;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 0 8px #00ffcc;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+}
+#smartScrollBtn.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+#smartScrollBtn:hover {
+  background: #0099ff;
+  color: #fff;
+  box-shadow: 0 0 10px #0099ff;
+}
   </style>
 </head>
-<body>
-
-<a href="index.html" class="back-home" title="Go Home">🏠</a>
-<div id="goTop" class="scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆️ Top</div>
-<div id="goBottom" class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">⬇️ Bottom</div>
-
-<h1>📸 Earnify Image Album</h1>
-<div class="gallery" id="gallery"></div>
-
-<!-- Fullscreen Preview -->
-<div class="preview" id="preview" onclick="closePreview(event)">
+<body><h1>Earnify Album</h1>
+<div class="gallery" id="gallery"></div><!-- Fullscreen Preview --><div class="preview" id="preview" onclick="closePreview(event)">
   <button class="nav-btn" id="prevBtn" onclick="prevImage(event)">❮</button>
   <img id="previewImg" src="">
   <button class="nav-btn" id="nextBtn" onclick="nextImage(event)">❯</button>
 </div>
-
+<div id="smartScrollBtn" onclick="handleScrollButton()">↓ Bottom</div>
 <script>
-  let images = [];
-  let currentIndex = 0;
+let images = [];
+let currentIndex = 0;
 
-  fetch("images.json")
-    .then(res => res.json())
-    .then(data => {
-      images = data;
-      const gallery = document.getElementById("gallery");
-      let delay = 0;
-      data.forEach((url, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.animationDelay = delay + 'ms';
-        delay += 100;
-        const img = document.createElement("img");
-        img.src = url;
-        img.onclick = () => showPreview(index);
-        img.onerror = () => card.remove();
-        card.appendChild(img);
-        gallery.appendChild(card);
-      });
+fetch("https://raw.githubusercontent.com/Reward-Loop-Earnify/1500PKR/refs/heads/main/images.json")
+  .then(res => res.json())
+  .then(data => {
+    images = data.reverse();
+    const gallery = document.getElementById("gallery");
+    images.forEach((url, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.onerror = () => card.remove();
+      img.onclick = () => showPreview(index);
+
+      const stats = getRandomStats();
+      const statsDiv = document.createElement("div");
+      statsDiv.className = "image-stats";
+      statsDiv.innerHTML = `
+        <span><i class="fas fa-eye"></i> ${stats.views}</span>
+        <span><i class="fas fa-heart"></i> ${stats.likes}</span>
+      `;
+
+      card.appendChild(img);
+      card.appendChild(statsDiv);
+      gallery.appendChild(card);
     });
-
-  function showPreview(index) {
-    currentIndex = index;
-    const preview = document.getElementById("preview");
-    document.getElementById("previewImg").src = images[index];
-    preview.style.display = "flex";
-  }
-
-  function closePreview(e) {
-    if (e.target.id === "preview" || e.target === document.getElementById("previewImg")) {
-      document.getElementById("preview").style.display = "none";
-    }
-  }
-
-  function nextImage(e) {
-    e.stopPropagation();
-    currentIndex = (currentIndex + 1) % images.length;
-    document.getElementById("previewImg").src = images[currentIndex];
-  }
-
-  function prevImage(e) {
-    e.stopPropagation();
-    currentIndex = (currentIndex - 1 + images.length) % images.length;
-    document.getElementById("previewImg").src = images[currentIndex];
-  }
-
-  // Auto-hide Scroll Buttons
-  let scrollTimeout;
-  window.addEventListener("scroll", () => {
-    document.getElementById("goTop").style.display = "block";
-    document.getElementById("goBottom").style.display = "block";
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      document.getElementById("goTop").style.display = "none";
-      document.getElementById("goBottom").style.display = "none";
-    }, 1500);
   });
-</script>
 
-</body>
+function showPreview(index) {
+  currentIndex = index;
+  document.getElementById("previewImg").src = images[index];
+  document.getElementById("preview").style.display = "flex";
+}
+
+function closePreview(e) {
+  if (e.target.id === "preview" || e.target === document.getElementById("previewImg")) {
+    document.getElementById("preview").style.display = "none";
+  }
+}
+
+function nextImage(e) {
+  e.stopPropagation();
+  currentIndex = (currentIndex + 1) % images.length;
+  document.getElementById("previewImg").src = images[currentIndex];
+}
+
+function prevImage(e) {
+  e.stopPropagation();
+  currentIndex = (currentIndex - 1 + images.length) % images.length;
+  document.getElementById("previewImg").src = images[currentIndex];
+}
+
+function getRandomStats() {
+  const viewsRaw = Math.floor(Math.random() * 100000) + 1000;
+  const likesRaw = Math.floor(viewsRaw * (Math.random() * 0.4 + 0.1));
+  return {
+    views: formatNumber(viewsRaw),
+    likes: formatNumber(likesRaw)
+  };
+}
+
+function formatNumber(num) {
+  if (num >= 1e6) return (num / 1e6).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (num >= 1e3) return (num / 1e3).toFixed(1).replace(/\.0$/, '') + 'K';
+  return num.toString();
+}
+
+let lastScrollY = window.scrollY;
+const smartBtn = document.getElementById('smartScrollBtn');
+
+window.addEventListener('scroll', () => {
+  const currentY = window.scrollY;
+  const bottomReached = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10;
+  const topReached = window.scrollY === 0;
+
+  smartBtn.classList.add('show');
+  clearTimeout(smartBtn.timer);
+  smartBtn.timer = setTimeout(() => {
+    smartBtn.classList.remove('show');
+  }, 1500);
+
+  // Direction-based label
+  if (bottomReached) {
+    smartBtn.innerText = "↑ Top";
+  } else if (topReached) {
+    smartBtn.innerText = "↓ Bottom";
+  } else if (currentY > lastScrollY) {
+    smartBtn.innerText = "↓ Bottom";
+  } else {
+    smartBtn.innerText = "↑ Top";
+  }
+
+  lastScrollY = currentY;
+});
+
+function handleScrollButton() {
+  if (smartBtn.innerText.includes('Top')) {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+}
+</script></body>
 </html>
