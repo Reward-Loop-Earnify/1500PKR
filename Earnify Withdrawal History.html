@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Withdraw History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f2a40, #1877f2);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 25px 20px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      animation: fadeIn 0.8s ease;
+    }
+
+    .icon {
+      font-size: 48px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 26px;
+      text-align: center;
+      margin: 0 0 10px;
+      color: #ffd700;
+    }
+
+    .total {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 15px;
+      color: #eeeeee;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.03);
+      box-shadow: 0 0 10px rgba(255,255,255,0.05);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    th {
+      background: rgba(255,255,255,0.1);
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    td {
+      color: #dddddd;
+      font-size: 15px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status {
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    .note {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: #cccccc;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="icon">🏦</div>
+    <h1>Withdraw History</h1>
+    <div class="total">Total Withdrawn: <strong>PKR 6000</strong></div>
+
+    <div class="table-container">
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+        <tr>
+          <td>2025-06-20 09:15:38</td>
+          <td>PKR 1500</td>
+          <td class="status">Completed</td>
+        </tr>
+        <tr>
+          <td>2025-06-22 14:27:07</td>
+          <td>PKR 1500</td>
+          <td class="status">Completed</td>
+        </tr>
+        <tr>
+          <td>2025-06-24 16:12:40</td>
+          <td>PKR 1500</td>
+          <td class="status">Completed</td>
+        </tr>
+        <tr>
+          <td>2025-06-26 18:49:59</td>
+          <td>PKR 1500</td>
+          <td class="status">Completed</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="note">All withdrawals have been successfully sent to your <strong>EasyPaisa</strong> account.</div>
+  </div>
+
+</body>
+</html>
