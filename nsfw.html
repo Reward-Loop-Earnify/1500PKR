@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Earnify Image Gallery</title>
+  <title>Earnify Image Album</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -12,6 +12,7 @@
       background: linear-gradient(135deg, #1f2a40, #2f80ed);
       color: white;
       padding: 20px;
+      overflow-x: hidden;
     }
     h1 {
       text-align: center;
@@ -35,6 +36,7 @@
       animation: fadeIn 0.6s ease forwards;
       transform: translateY(20px);
       opacity: 0;
+      cursor: pointer;
     }
     .card img {
       width: 100%;
@@ -42,20 +44,10 @@
       display: block;
       border-radius: 15px;
     }
-    .loading {
-      text-align: center;
-      color: #ccc;
-      margin-top: 20px;
-      font-size: 14px;
-    }
     @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      to {opacity: 1; transform: translateY(0);}
     }
 
-    /* ✅ FIXED Floating Home Button */
     .back-home {
       position: fixed;
       top: 14px;
@@ -68,87 +60,138 @@
       justify-content: center;
       align-items: center;
       color: black;
-      font-weight: bold;
       font-size: 20px;
       text-decoration: none;
       box-shadow: 0 0 8px #00000030;
       z-index: 1000;
     }
-    .back-home:hover {
-      background: #00cfa5;
-    }
 
-    /* ✅ Popup Notification */
-    .popup {
+    .scroll-btn {
       position: fixed;
-      top: 20px;
-      right: -400px;
-      background: #ffffff;
-      color: #000;
-      padding: 12px 18px;
-      border-radius: 12px 0 0 12px;
-      box-shadow: 0 0 10px #00000033;
-      font-size: 14px;
-      animation: slideIn 0.6s forwards, slideOut 0.6s 4s forwards;
+      right: 14px;
+      background: #00ffd2;
+      color: black;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 0 10px #00000050;
+      display: none;
+      transition: 0.3s;
+    }
+    #goTop { bottom: 70px; }
+    #goBottom { bottom: 20px; }
+
+    .preview {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       z-index: 999;
+      display: none;
     }
-    @keyframes slideIn {
-      to { right: 10px; }
+    .preview img {
+      max-width: 95%;
+      max-height: 95%;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #000;
     }
-    @keyframes slideOut {
-      to { right: -400px; }
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.3);
+      border: none;
+      color: white;
+      font-size: 30px;
+      padding: 10px 20px;
+      cursor: pointer;
+      z-index: 1001;
+      border-radius: 50%;
     }
+    #prevBtn { left: 20px; }
+    #nextBtn { right: 20px; }
   </style>
 </head>
 <body>
 
 <a href="index.html" class="back-home" title="Go Home">🏠</a>
+<div id="goTop" class="scroll-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆️ Top</div>
+<div id="goBottom" class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})">⬇️ Bottom</div>
 
 <h1>📸 Earnify Image Album</h1>
 <div class="gallery" id="gallery"></div>
-<div class="loading" id="loading">Loading images...</div>
-<div id="popup-container"></div>
+
+<!-- Fullscreen Preview -->
+<div class="preview" id="preview" onclick="closePreview(event)">
+  <button class="nav-btn" id="prevBtn" onclick="prevImage(event)">❮</button>
+  <img id="previewImg" src="">
+  <button class="nav-btn" id="nextBtn" onclick="nextImage(event)">❯</button>
+</div>
 
 <script>
+  let images = [];
+  let currentIndex = 0;
+
   fetch("images.json")
     .then(res => res.json())
     .then(data => {
+      images = data;
       const gallery = document.getElementById("gallery");
-      const loading = document.getElementById("loading");
       let delay = 0;
-      data.forEach(url => {
+      data.forEach((url, index) => {
         const card = document.createElement("div");
         card.className = "card";
         card.style.animationDelay = delay + 'ms';
         delay += 100;
         const img = document.createElement("img");
         img.src = url;
+        img.onclick = () => showPreview(index);
         img.onerror = () => card.remove();
         card.appendChild(img);
         gallery.appendChild(card);
       });
-      loading.style.display = "none";
     });
 
-  // ⏰ Fake Notification Popup
-  const popupData = [
-    "Ayesha uploaded 5 boobs images!",
-    "Gallery updated successfully.",
-    "New wallpapers added to album.",
-    "Random HD image just uploaded!",
-    "Latest collection now live."
-  ];
-
-  function showPopup() {
-    const msg = popupData[Math.floor(Math.random() * popupData.length)];
-    const pop = document.createElement("div");
-    pop.className = "popup";
-    pop.innerText = msg;
-    document.getElementById("popup-container").appendChild(pop);
-    setTimeout(() => pop.remove(), 5000);
+  function showPreview(index) {
+    currentIndex = index;
+    const preview = document.getElementById("preview");
+    document.getElementById("previewImg").src = images[index];
+    preview.style.display = "flex";
   }
 
-  setInterval(showPopup, 8000);
+  function closePreview(e) {
+    if (e.target.id === "preview" || e.target === document.getElementById("previewImg")) {
+      document.getElementById("preview").style.display = "none";
+    }
+  }
+
+  function nextImage(e) {
+    e.stopPropagation();
+    currentIndex = (currentIndex + 1) % images.length;
+    document.getElementById("previewImg").src = images[currentIndex];
+  }
+
+  function prevImage(e) {
+    e.stopPropagation();
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    document.getElementById("previewImg").src = images[currentIndex];
+  }
+
+  // Auto-hide Scroll Buttons
+  let scrollTimeout;
+  window.addEventListener("scroll", () => {
+    document.getElementById("goTop").style.display = "block";
+    document.getElementById("goBottom").style.display = "block";
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      document.getElementById("goTop").style.display = "none";
+      document.getElementById("goBottom").style.display = "none";
+    }, 1500);
+  });
 </script>
 
 </body>
