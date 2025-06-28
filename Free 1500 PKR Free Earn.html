@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Earnify - 1500 PKR Bonus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif;}
+    body {
+      background: linear-gradient(135deg, #1f2a40, #2f80ed);
+      color: #ffffff;
+      padding: 20px;
+    }
+    .container {
+      max-width: 520px;
+      margin: auto;
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 0 12px #00000033;
+      animation: fadeIn 1s ease;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section {
+      background: rgba(0,0,0,0.25);
+      padding: 15px;
+      margin: 12px 0;
+      border-radius: 10px;
+    }
+    .highlight {
+      font-size: 24px;
+      color: #00ffd2;
+      font-weight: bold;
+      text-align: center;
+    }
+    .banner-img {
+      width: 100%;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+    .section-img {
+      display: block;
+      width: 80px;
+      margin: 0 auto 10px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .btn1, .btn2, .btn3 {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: 0.3s;
+    }
+    .btn1 { background: #00ffd2; color: #000; }
+    .btn2 { background: #ffcc00; color: #000; }
+    .btn3 {
+      background: #ff4d4d;
+      color: #fff;
+      display: block;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .btn1:hover { background: #00dab4; }
+    .btn2:hover { background: #e6b800; }
+    .btn3:hover { background: #e63c3c; }
+
+    .btn1 img, .btn2 img, .btn3 img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .pop {
+      position: fixed;
+      top: 20px;
+      right: -400px;
+      background: #ffffff;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 12px 0 0 12px;
+      box-shadow: 0 0 10px #00000033;
+      font-size: 14px;
+      animation: slideIn 0.7s forwards, slideOut 0.7s 4s forwards;
+      z-index: 999;
+    }
+
+    @keyframes slideIn { to { right: 10px; } }
+    @keyframes slideOut { to { right: -400px; } }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 13px;
+      text-align: center;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Welcome Banner -->
+  <img src="https://i.imgur.com/b3AhJ6i.png" alt="Welcome Banner" class="banner-img" />
+
+  <h1>Welcome to Earnify</h1>
+  <p style="text-align:center; font-size: 14px;">Login now and get instant <strong>Rs.1500 bonus</strong>.</p>
+
+  <!-- Users Section -->
+  <div class="section">
+    <h2>Total Users</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077114.png" class="section-img" alt="Users">
+    <div class="highlight" id="userCount">Loading...</div>
+  </div>
+
+  <!-- Withdrawal Section -->
+  <div class="section">
+    <h2>Latest Withdrawal</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/2331/2331943.png" class="section-img" alt="Money">
+    <div>
+      Rs.1500 sent to Easypaisa<br>
+      User: <strong>Ali Raza</strong><br>
+      Time: <strong>1 hour ago</strong>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <a href="login.html" class="btn1">
+      <img src="https://img.icons8.com/ios-filled/50/000000/lock--v1.png"/> Login
+    </a>
+    <a href="signup.html" class="btn2">
+      <img src="https://img.icons8.com/ios-filled/50/000000/add-user-group-man-man--v1.png"/> Sign Up
+    </a>
+  </div>
+
+  <a href="withdraw.html" class="btn3">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/money-transfer.png"/> Withdraw History
+  </a>
+
+  <!-- How It Works -->
+  <div class="section">
+    <h2>How It Works</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" class="section-img" alt="How it works">
+    <div>
+      1. Sign up using mobile number.<br>
+      2. Login to get Rs.1500 bonus.<br>
+      3. Withdraw via Easypaisa/JazzCash.<br>
+      4. Refer & earn more.
+    </div>
+  </div>
+
+  <!-- Security -->
+  <div class="section">
+    <h2>Security Notice</h2>
+    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" class="section-img" alt="Secure">
+    <div>
+      Your data is secure. No OTP or banking details required.
+    </div>
+  </div>
+
+  <footer>© 2025 Reward-Loop-Earnify LTD</footer>
+</div>
+
+<!-- Notification Container -->
+<div id="popContainer"></div>
+
+<script>
+  // Auto-Increase User Count
+  const userCountEl = document.getElementById("userCount");
+  let count = localStorage.getItem("userCount");
+  if (!count) {
+    count = 23650;
+  } else {
+    count = parseInt(count) + Math.floor(Math.random() * 4 + 1);
+  }
+  localStorage.setItem("userCount", count);
+  userCountEl.innerText = count + "+ Users";
+
+  // Fake Notification Popups
+  const popData = [
+    "Ayesha just registered!",
+    "Hamza withdrew Rs.1500",
+    "Ali received Rs.1500 today!",
+    "Zainab invited 5 friends!",
+    "Bilal got Rs.3000 in referral!"
+  ];
+
+  function showPop() {
+    const msg = popData[Math.floor(Math.random() * popData.length)];
+    const pop = document.createElement("div");
+    pop.className = "pop";
+    pop.innerText = msg;
+    document.getElementById("popContainer").appendChild(pop);
+    setTimeout(() => pop.remove(), 5000);
+  }
+
+  setInterval(showPop, 7000);
+</script>
+
+</body>
+</html>
