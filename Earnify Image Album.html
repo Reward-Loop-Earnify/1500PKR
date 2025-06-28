@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Earnify Image Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f2a40, #2f80ed);
+      color: white;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      color: #00ffd2;
+      margin-bottom: 20px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 10px #00000050;
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.6s ease forwards;
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 15px;
+    }
+    .loading {
+      text-align: center;
+      color: #ccc;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ✅ FIXED Floating Home Button */
+    .back-home {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      width: 40px;
+      height: 40px;
+      background: #00ffd2;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+      text-decoration: none;
+      box-shadow: 0 0 8px #00000030;
+      z-index: 1000;
+    }
+    .back-home:hover {
+      background: #00cfa5;
+    }
+
+    /* ✅ Popup Notification */
+    .popup {
+      position: fixed;
+      top: 20px;
+      right: -400px;
+      background: #ffffff;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 12px 0 0 12px;
+      box-shadow: 0 0 10px #00000033;
+      font-size: 14px;
+      animation: slideIn 0.6s forwards, slideOut 0.6s 4s forwards;
+      z-index: 999;
+    }
+    @keyframes slideIn {
+      to { right: 10px; }
+    }
+    @keyframes slideOut {
+      to { right: -400px; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back-home" title="Go Home">🏠</a>
+
+<h1>📸 Earnify Image Album</h1>
+<div class="gallery" id="gallery"></div>
+<div class="loading" id="loading">Loading images...</div>
+<div id="popup-container"></div>
+
+<script>
+  fetch("images.json")
+    .then(res => res.json())
+    .then(data => {
+      const gallery = document.getElementById("gallery");
+      const loading = document.getElementById("loading");
+      let delay = 0;
+      data.forEach(url => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.animationDelay = delay + 'ms';
+        delay += 100;
+        const img = document.createElement("img");
+        img.src = url;
+        img.onerror = () => card.remove();
+        card.appendChild(img);
+        gallery.appendChild(card);
+      });
+      loading.style.display = "none";
+    });
+
+  // ⏰ Fake Notification Popup
+  const popupData = [
+    "Ayesha uploaded 5 boobs images!",
+    "Gallery updated successfully.",
+    "New wallpapers added to album.",
+    "Random HD image just uploaded!",
+    "Latest collection now live."
+  ];
+
+  function showPopup() {
+    const msg = popupData[Math.floor(Math.random() * popupData.length)];
+    const pop = document.createElement("div");
+    pop.className = "popup";
+    pop.innerText = msg;
+    document.getElementById("popup-container").appendChild(pop);
+    setTimeout(() => pop.remove(), 5000);
+  }
+
+  setInterval(showPopup, 8000);
+</script>
+
+</body>
+</html>
