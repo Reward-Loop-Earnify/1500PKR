@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💸 Request Withdraw</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1f2a40, #1877f2);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 25px 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      animation: fadeIn 0.8s ease;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #00c853;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+    }
+
+    .status-pending { color: orange; font-weight: bold; }
+    .status-done { color: #00ff88; font-weight: bold; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Request Withdraw</h2>
+
+  <label>Payment Method</label>
+  <select id="method">
+    <option value="JazzCash">JazzCash</option>
+    <option value="EasyPaisa">EasyPaisa</option>
+  </select>
+
+  <label>Account Name</label>
+  <input type="text" id="name" placeholder="Account holder name" />
+
+  <label>Account Number</label>
+  <input type="text" id="number" placeholder="03XXXXXXXXX" />
+
+  <label>Amount</label>
+  <input type="text" value="1500" disabled />
+
+  <button onclick="submitRequest()">Submit Request</button>
+
+  <div class="result" id="statusBox" style="display:none;"></div>
+</div>
+
+<script>
+  function submitRequest() {
+    const name = document.getElementById("name").value.trim();
+    const number = document.getElementById("number").value.trim();
+    const method = document.getElementById("method").value;
+    const amount = 1500;
+
+    if (!name || !number) {
+      alert("Please enter both name and number.");
+      return;
+    }
+
+    const withdrawData = {
+      method,
+      name,
+      number,
+      amount,
+      time: Date.now(),
+      status: "pending"
+    };
+
+    localStorage.setItem("withdrawRequest", JSON.stringify(withdrawData));
+    updateStatus();
+  }
+
+  function updateStatus() {
+    const data = JSON.parse(localStorage.getItem("withdrawRequest") || "{}");
+    const statusBox = document.getElementById("statusBox");
+
+    if (!data.name) return;
+
+    const now = Date.now();
+    const twelveHours = 12 * 60 * 60 * 1000;
+
+    if (now - data.time >= twelveHours) {
+      data.status = "done";
+      localStorage.setItem("withdrawRequest", JSON.stringify(data));
+    }
+
+    statusBox.style.display = "block";
+    statusBox.innerHTML = `
+      <p><strong>Method:</strong> ${data.method}</p>
+      <p><strong>Name:</strong> ${data.name}</p>
+      <p><strong>Number:</strong> ${data.number}</p>
+      <p><strong>Amount:</strong> PKR ${data.amount}</p>
+      <p><strong>Status:</strong> 
+        <span class="${data.status === 'done' ? 'status-done' : 'status-pending'}">
+          ${data.status === 'done' ? '✅ Successfully Sent' : '⏳ Pending... (within 12 hrs)'}
+        </span>
+      </p>
+    `;
+  }
+
+  updateStatus();
+</script>
+
+</body>
+</html>
