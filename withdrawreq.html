@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>💸 Request Withdraw</title>
+  <title>Request Withdraw</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -18,152 +17,162 @@
       align-items: flex-start;
       min-height: 100vh;
       padding: 20px;
-    }
+    }.container {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 25px 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.8s ease;
+}
 
-    .container {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 25px 20px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      animation: fadeIn 0.8s ease;
-    }
+h2 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #ffd700;
+}
 
-    h2 {
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: 10px;
-      color: #ffd700;
-    }
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
 
-    label {
-      display: block;
-      margin-top: 15px;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
+input, select {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #f5f5f5;
+  color: #333;
+}
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      background: #f5f5f5;
-      color: #333;
-    }
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #00c853;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #00c853;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+.result {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+}
 
-    .result {
-      margin-top: 25px;
-      padding: 15px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
-    }
+.status-pending { color: orange; font-weight: bold; }
+.status-done { color: #00ff88; font-weight: bold; }
 
-    .status-pending { color: orange; font-weight: bold; }
-    .status-done { color: #00ff88; font-weight: bold; }
+.popup {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 999;
+}
+.popup.show {
+  display: block;
+}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
   </style>
 </head>
-<body>
+<body><div class="container">
+  <h2>Request Withdraw</h2><label>Payment Method</label> <select id="method"> <option value="JazzCash">JazzCash</option> <option value="EasyPaisa">EasyPaisa</option> </select>
 
-<div class="container">
-  <h2>Request Withdraw</h2>
+<label>Account Name</label> <input type="text" id="name" placeholder="Account holder name" />
 
-  <label>Payment Method</label>
-  <select id="method">
-    <option value="JazzCash">JazzCash</option>
-    <option value="EasyPaisa">EasyPaisa</option>
-  </select>
+<label>Account Number</label> <input type="text" id="number" placeholder="03XXXXXXXXX" />
 
-  <label>Account Name</label>
-  <input type="text" id="name" placeholder="Account holder name" />
+<label>Amount</label> <input type="text" id="amount" disabled />
 
-  <label>Account Number</label>
-  <input type="text" id="number" placeholder="03XXXXXXXXX" />
-
-  <label>Amount</label>
-  <input type="text" value="1500" disabled />
-
-  <button onclick="submitRequest()">Submit Request</button>
+<button onclick="submitRequest()">Submit Request</button>
 
   <div class="result" id="statusBox" style="display:none;"></div>
-</div>
+</div><div id="popup" class="popup"></div><script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-<script>
-  function submitRequest() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
+    authDomain: "logindb-3ed54.firebaseapp.com",
+    databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
+    projectId: "logindb-3ed54",
+    storageBucket: "logindb-3ed54.appspot.com",
+    messagingSenderId: "462951915771",
+    appId: "1:462951915771:web:5e317781e6b95c9123105e"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  function showPopup(message) {
+    const popup = document.getElementById("popup");
+    popup.innerText = message;
+    popup.classList.add("show");
+    setTimeout(() => popup.classList.remove("show"), 3000);
+  }
+
+  const balance = localStorage.getItem("claimed") * 200 || 0;
+  document.getElementById("amount").value = balance;
+
+  window.submitRequest = () => {
     const name = document.getElementById("name").value.trim();
     const number = document.getElementById("number").value.trim();
     const method = document.getElementById("method").value;
-    const amount = 1500;
 
-    if (!name || !number) {
-      alert("Please enter both name and number.");
-      return;
-    }
+    if (!name || !number) return showPopup("Enter name and number.");
 
     const withdrawData = {
       method,
       name,
       number,
-      amount,
-      time: Date.now(),
+      amount: balance,
+      time: new Date().toLocaleString(),
       status: "pending"
     };
 
-    localStorage.setItem("withdrawRequest", JSON.stringify(withdrawData));
-    updateStatus();
-  }
+    push(ref(db, "withdrawreq/"), withdrawData)
+      .then(() => {
+        localStorage.setItem("claimed", 0);
+        updateStatus(withdrawData);
+        showPopup("Request submitted successfully!");
+      })
+      .catch(err => showPopup("Firebase Error: " + err.message));
+  };
 
-  function updateStatus() {
-    const data = JSON.parse(localStorage.getItem("withdrawRequest") || "{}");
-    const statusBox = document.getElementById("statusBox");
-
-    if (!data.name) return;
-
-    const now = Date.now();
-    const twelveHours = 12 * 60 * 60 * 1000;
-
-    if (now - data.time >= twelveHours) {
-      data.status = "done";
-      localStorage.setItem("withdrawRequest", JSON.stringify(data));
-    }
-
-    statusBox.style.display = "block";
-    statusBox.innerHTML = `
+  function updateStatus(data) {
+    const box = document.getElementById("statusBox");
+    box.style.display = "block";
+    box.innerHTML = `
       <p><strong>Method:</strong> ${data.method}</p>
       <p><strong>Name:</strong> ${data.name}</p>
       <p><strong>Number:</strong> ${data.number}</p>
       <p><strong>Amount:</strong> PKR ${data.amount}</p>
-      <p><strong>Status:</strong> 
-        <span class="${data.status === 'done' ? 'status-done' : 'status-pending'}">
-          ${data.status === 'done' ? '✅ Successfully Sent' : '⏳ Pending... (within 12 hrs)'}
-        </span>
-      </p>
+      <p><strong>Status:</strong> <span class="status-pending">⏳ Pending (within 12 hrs)</span></p>
     `;
   }
-
-  updateStatus();
-</script>
-
-</body>
+</script></body>
 </html>
