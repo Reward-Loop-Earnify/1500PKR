@@ -172,11 +172,15 @@
 
         push(ref(db, "signups/"), signupData)
           .then(() => {
-            showPopup("Sign up successful! Please log in now.", "success");
-            document.getElementById("name").value = "";
-            document.getElementById("contact").value = "";
-            document.getElementById("password").value = "";
-          })
+  showPopup("Sign up successful! Redirecting to login...", "success");
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 2000); // 2 second wait before redirect
+
+  document.getElementById("name").value = "";
+  document.getElementById("contact").value = "";
+  document.getElementById("password").value = "";
+})
           .catch((error) => {
             console.error("Firebase Error:", error);
             showPopup("Error: " + error.message, "error");
