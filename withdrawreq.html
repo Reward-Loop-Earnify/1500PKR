@@ -157,7 +157,8 @@ button {
     push(ref(db, "withdrawreq/"), withdrawData)
       .then(() => {
         localStorage.setItem("claimed", 0);
-        updateStatus(withdrawData);
+        localStorage.setItem("lastWithdrawRequest", JSON.stringify(withdrawData));
+updateStatus(withdrawData);
         showPopup("Request submitted successfully!");
       })
       .catch(err => showPopup("Firebase Error: " + err.message));
@@ -174,5 +175,11 @@ button {
       <p><strong>Status:</strong> <span class="status-pending">⏳ Pending (within 12 hrs)</span></p>
     `;
   }
+
+// Show status if available in localStorage
+const saved = localStorage.getItem("lastWithdrawRequest");
+if (saved) {
+  updateStatus(JSON.parse(saved));
+}
 </script></body>
 </html>
