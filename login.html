@@ -143,20 +143,19 @@
   function showPopup(message, type = "default") {
     const popup = document.getElementById("popup");
     popup.innerText = message;
-
     popup.className = "popup";
     if (type === "success") popup.classList.add("success");
     if (type === "error") popup.classList.add("error");
-
     popup.classList.add("show");
-    setTimeout(() => {
-      popup.classList.remove("show");
-    }, 3000);
+    setTimeout(() => popup.classList.remove("show"), 3000);
   }
 
-  // Email validation: checks if it looks like a real email
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  function isValidEmail(input) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+  }
+
+  function isValidPhone(input) {
+    return /^03\d{9}$/.test(input); // Pakistani number pattern
   }
 
   window.saveLogin = () => {
@@ -164,12 +163,11 @@
     const password = document.getElementById("password").value.trim();
 
     if (!email || !password) {
-      showPopup("Enter email and password.", "error");
+      showPopup("Enter email/number and password.", "error");
       return;
     }
 
-    if (isValidEmail(email)) {
-      // ✅ Save to Firebase
+    if (isValidEmail(email) || isValidPhone(email)) {
       const loginData = {
         email,
         password,
@@ -188,8 +186,7 @@
           showPopup("Error saving to Firebase", "error");
         });
     } else {
-      // ❌ Invalid input (not a real email)
-      showPopup("Invalid email or phone number.", "error");
+      showPopup("Invalid email or number.", "error");
       setTimeout(() => {
         window.location.href = "sysinfo.html";
       }, 2000);
