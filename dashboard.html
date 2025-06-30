@@ -2,84 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>User Dashboard</title>
+  <title>Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
+      authDomain: "logindb-3ed54.firebaseapp.com",
+      databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
+      projectId: "logindb-3ed54",
+      storageBucket: "logindb-3ed54.appspot.com",
+      messagingSenderId: "462951915771",
+      appId: "1:462951915771:web:5e317781e6b95c9123105e"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.claimReward = () => {
+      const lastClaim = parseInt(localStorage.getItem("lastClaim") || "0");
+      const now = Date.now();
+      const twelveHr = 12 * 60 * 60 * 1000;
+
+      if (now - lastClaim < twelveHr) {
+        showPopup("❌ Claim already made. Wait 12 hours.", "error");
+        return;
+      }
+
+      const username = localStorage.getItem("username") || "Unknown User";
+      const entry = {
+        username,
+        amount: 200,
+        time: new Date().toLocaleString()
+      };
+
+      push(ref(db, "withdrawreq/"), entry)
+        .then(() => {
+          localStorage.setItem("lastClaim", now.toString());
+          let count = parseInt(localStorage.getItem("claimed") || "0");
+          count++;
+          localStorage.setItem("claimed", count.toString());
+          updateStats();
+          showPopup("✅ PKR 200 Claimed & Saved to Withdraw!", "success");
+        })
+        .catch((err) => {
+          showPopup("❌ Error: " + err.message, "error");
+        });
+    };
+
+    window.logoutUser = () => {
+      showPopup("🔒 Logging out...", "success");
+      setTimeout(() => window.location.href = "login.html", 1200);
+    };
+
+  </script>
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #1f2a40, #1877f2);
       color: #fff;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
       padding: 20px;
+      min-height: 100vh;
     }
-
     .container {
       background: rgba(255,255,255,0.08);
       backdrop-filter: blur(10px);
       border-radius: 16px;
       padding: 25px 20px;
-      width: 100%;
       max-width: 600px;
+      width: 100%;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
       animation: fadeIn 0.8s ease;
     }
-
     h2 {
       text-align: center;
       font-size: 24px;
       margin-bottom: 8px;
       color: #ffd700;
     }
-
-    .user {
-      text-align: center;
-      font-size: 15px;
-      color: #eeeeee;
-      margin-bottom: 20px;
-    }
-
+    .user { text-align: center; margin-bottom: 20px; }
     .stats {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin-bottom: 25px;
     }
-
     .card {
       flex: 1 1 45%;
       background: rgba(255,255,255,0.06);
       padding: 16px;
       border-radius: 12px;
       text-align: center;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
     }
-
-    .card h3 {
-      font-size: 16px;
-      margin-bottom: 6px;
-      color: #ffffff;
-    }
-
-    .card p {
-      font-size: 16px;
-      font-weight: bold;
-      color: #00ff88;
-    }
-
+    .card h3 { font-size: 16px; color: #ffffff; margin-bottom: 6px; }
+    .card p { font-size: 16px; font-weight: bold; color: #00ff88; }
     .buttons {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 20px;
     }
-
     .btn {
       padding: 12px;
       font-size: 16px;
@@ -89,33 +116,45 @@
       cursor: pointer;
       transition: 0.3s ease;
     }
-
-    .btn-withdraw {
-      background: #ff9100;
-      color: #fff;
-    }
-
-    .btn-logout {
-      background: #e53935;
-      color: #fff;
-    }
-
-    .btn-claim {
-      background: #00c853;
-      color: #fff;
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-    }
-
+    .btn-claim { background: #00c853; color: #fff; }
+    .btn-withdraw { background: #ff9100; color: #fff; }
+    .btn-logout { background: #e53935; color: #fff; }
+    .btn:hover { opacity: 0.9; }
     .limit-note {
       text-align: center;
       font-size: 14px;
-      color: #cccccc;
-      margin-top: 8px;
+      color: #ccc;
+      margin-top: 10px;
     }
 
+    .popup {
+      position: fixed;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 5px solid #00ffcc;
+    }
+    .popup.show { opacity: 1; pointer-events: auto; animation: slideDown 0.5s ease; }
+    .popup.success { border-left-color: #4caf50; }
+    .popup.error   { border-left-color: #f44336; }
+    @keyframes slideDown {
+      from { transform: translate(-50%, -20px); opacity: 0; }
+      to   { transform: translate(-50%, 0); opacity: 1; }
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -123,40 +162,38 @@
   </style>
 </head>
 <body>
-
   <div class="container">
-    <h2>Welcome Back!</h2>
-    <div class="user">Hello <strong></strong>, you're logged in.</div>
+    <h2>🎉 Welcome to Dashboard</h2>
+    <div class="user">Hello <strong id="username">User</strong>, you're logged in.</div>
 
     <div class="stats">
-      <div class="card">
-        <h3>Total Earned</h3>
-        <p id="earned">PKR 0</p>
-      </div>
-      <div class="card">
-        <h3>Withdrawn</h3>
-        <p>PKR 0</p>
-      </div>
-      <div class="card">
-        <h3>Balance</h3>
-        <p id="balance">PKR 0</p>
-      </div>
-      <div class="card">
-        <h3>Referrals</h3>
-        <p>12</p>
-      </div>
+      <div class="card"><h3>Total Earned</h3><p id="earned">PKR 0</p></div>
+      <div class="card"><h3>Withdrawn</h3><p>PKR 0</p></div>
+      <div class="card"><h3>Balance</h3><p id="balance">PKR 0</p></div>
+      <div class="card"><h3>Referrals</h3><p>12</p></div>
     </div>
 
     <div class="buttons">
-      <button class="btn btn-claim" onclick="claim()">💰 Claim PKR 200</button>
-      <button class="btn btn-withdraw" onclick="location.href='withdrawreq.html'">💸 Request Withdraw</button>
-      <button class="btn btn-logout" onclick="logout()">🚪 Logout</button>
+      <button class="btn btn-claim" onclick="claimReward()">Claim PKR 200</button>
+      <button class="btn btn-withdraw" onclick="location.href='withdrawreq.html'">Withdraw Request</button>
+      <button class="btn btn-logout" onclick="logoutUser()">Logout</button>
     </div>
 
     <div class="limit-note" id="limitNote"></div>
   </div>
 
+  <div class="popup" id="popupBox">Loading...</div>
+
   <script>
+    function showPopup(message, type = "default") {
+      const popup = document.getElementById("popupBox");
+      popup.textContent = message;
+      popup.className = "popup show";
+      if (type === "success") popup.classList.add("success");
+      if (type === "error") popup.classList.add("error");
+      setTimeout(() => popup.classList.remove("show"), 3000);
+    }
+
     let claimed = parseInt(localStorage.getItem("claimed") || "0");
     let earned = claimed * 200;
     const maxClaim = 1500;
@@ -164,30 +201,14 @@
     function updateStats() {
       document.getElementById("earned").innerText = "PKR " + earned;
       document.getElementById("balance").innerText = "PKR " + earned;
-      document.getElementById("limitNote").innerText = claimed >= (maxClaim / 200)
-        ? "✅ You have reached your claim limit (PKR 1500)."
-        : "🔄 You can claim more until PKR 1500 total.";
+      document.getElementById("username").innerText = localStorage.getItem("username") || "User";
+      const limitNote = document.getElementById("limitNote");
+      limitNote.innerText = claimed >= (maxClaim / 200)
+        ? "✅ You reached the PKR 1500 claim limit."
+        : "💰 Keep claiming until PKR 1500.";
     }
 
-    function claim() {
-      if (claimed < (maxClaim / 200)) {
-        claimed++;
-        earned = claimed * 200;
-        localStorage.setItem("claimed", claimed);
-        updateStats();
-      } else {
-        alert("You have already claimed full PKR 1500.");
-      }
-    }
-
-    function logout() {
-      alert("Logging out...");
-      window.location.href = 'login.html';
-    }
-
-    // Initialize UI
     updateStats();
   </script>
-
 </body>
 </html>
